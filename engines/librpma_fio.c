@@ -166,6 +166,12 @@ char *librpma_fio_allocate_pmem(struct thread_data *td, struct fio_file *f,
 	mem->mem_ptr = mem_ptr;
 	mem->size_mmap = size_mmap;
 
+	volatile char *cur_addr = mem_ptr;
+	char *addr_end = (char *)cur_addr + size_mmap;
+	for (; cur_addr < addr_end; cur_addr += 4096) {
+		*cur_addr = *cur_addr;
+	}
+
 	return mem_ptr + ws_offset;
 
 err_unmap:
